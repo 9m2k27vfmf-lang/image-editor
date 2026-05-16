@@ -1,24 +1,23 @@
 from PIL import Image, ImageFilter, ImageEnhance
-import os
 
-def edit_image(input_path, output_path, operation):
+
+def edit_image(input_path: str, output_path: str, operation: dict) -> bool:
     """
-    Bewerk afbeeldingen met PIL
+    Apply an image operation using PIL and save the result.
 
     Operations:
-    - resize: (width, height)
-    - blur: intensity (1-10)
-    - brighten: intensity (0.5-2.0)
-    - contrast: intensity (0.5-2.0)
-    - grayscale
-    - rotate: degrees
-    """
+    - resize: requires 'width' (int) and 'height' (int)
+    - blur: requires 'intensity' (1-10)
+    - brighten: requires 'intensity' (0.5-2.0)
+    - contrast: requires 'intensity' (0.5-2.0)
+    - grayscale: no extra fields needed
+    - rotate: requires 'degrees' (int)
 
+    Returns True on success, False on failure.
+    """
     try:
-        # Open afbeelding
         img = Image.open(input_path)
 
-        # Operatie uitvoeren
         if operation["type"] == "resize":
             img = img.resize((operation["width"], operation["height"]))
 
@@ -34,33 +33,31 @@ def edit_image(input_path, output_path, operation):
             img = enhancer.enhance(operation["intensity"])
 
         elif operation["type"] == "grayscale":
-            img = img.convert('L')
+            img = img.convert("L")
 
         elif operation["type"] == "rotate":
             img = img.rotate(operation["degrees"])
 
-        # Sla op
         img.save(output_path)
-        print(f"✅ Afbeelding opgeslagen: {output_path}")
+        print(f"Saved: {output_path}")
         return True
 
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
         return False
 
-# Voorbeelden
+
 if __name__ == "__main__":
-    # Test: maak een voorbeeldafbeelding
-    test_img = Image.new('RGB', (200, 200), color='red')
-    test_img.save('test_image.jpg')
+    test_img = Image.new("RGB", (200, 200), color="red")
+    test_img.save("test_image.jpg")
+    print("Test image created.")
 
-    print("Test afbeelding aangemaakt!")
-    print("\nVoorbeelden:")
-    print("1. Verklein:")
-    edit_image('test_image.jpg', 'output_small.jpg', {"type": "resize", "width": 100, "height": 100})
+    print("\nExamples:")
+    print("1. Resize:")
+    edit_image("test_image.jpg", "output_small.jpg", {"type": "resize", "width": 100, "height": 100})
 
-    print("\n2. Maak grijsschaal:")
-    edit_image('test_image.jpg', 'output_gray.jpg', {"type": "grayscale"})
+    print("\n2. Grayscale:")
+    edit_image("test_image.jpg", "output_gray.jpg", {"type": "grayscale"})
 
-    print("\n3. Maak helderder:")
-    edit_image('test_image.jpg', 'output_bright.jpg', {"type": "brighten", "intensity": 1.5})
+    print("\n3. Brighten:")
+    edit_image("test_image.jpg", "output_bright.jpg", {"type": "brighten", "intensity": 1.5})
